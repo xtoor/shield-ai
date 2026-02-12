@@ -64,12 +64,15 @@ RUN mkdir -p /home/agent/.npm-global && \
 COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
 
 # 6. Networking & Stealth (Tunnels)
-# Install Tailscale
-RUN curl -fsSL https://tailscale.com/install.sh | sh
+# Install Tailscale (Manual apt-based install for stability)
+RUN mkdir -p /usr/share/keyrings && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list && \
+    apt-get update && apt-get install -y tailscale && \
+    apt-get clean
 
 # Install Cloudflare Warp (Using Debian Bookworm repo for Kali compatibility)
-RUN mkdir -p /usr/share/keyrings && \
-    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
+RUN curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
     apt-get update && apt-get install -y cloudflare-warp && \
     apt-get clean
