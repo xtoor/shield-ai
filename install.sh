@@ -1,11 +1,18 @@
 #!/bin/bash
 # SHIELD.ai One-Line Installer ⚔️🛡️
 
-echo "--- SHIELD.ai Rapid Deployment ---"
+echo "--- SHIELD.ai Rapid Deployment (Linux/macOS) ---"
 
-# 1. Check for Docker
+# 1. Check for Docker Client
 if ! command -v docker &> /dev/null; then
-    echo "Error: Docker is not installed. Please visit https://docs.docker.com/get-docker/"
+    echo "Error: Docker CLI not found. Please visit https://docs.docker.com/get-docker/"
+    exit 1
+fi
+
+# 1.1 Check for Docker Engine
+echo "[*] Checking Docker Engine pulse..."
+if ! docker info &> /dev/null; then
+    echo "Error: Docker Engine is not responding. Please make sure Docker Desktop is running."
     exit 1
 fi
 
@@ -29,9 +36,11 @@ if [ ! -f ".env" ]; then
     read -p "OpenAI API Key: " oai_key
     read -p "GitHub Token: " gh_token
     
-    sed -i "s/TS_AUTHKEY=tskey-auth-xxxxxx/TS_AUTHKEY=$ts_key/" .env
-    sed -i "s/OPENAI_API_KEY=sk-xxxxxx/OPENAI_API_KEY=$oai_key/" .env
-    sed -i "s/GITHUB_TOKEN=ghp_xxxxxx/GITHUB_TOKEN=$gh_token/" .env
+    # Use a backup extension for sed to maintain compatibility between GNU (Linux) and BSD (macOS)
+    sed -i.bak "s/TS_AUTHKEY=tskey-auth-xxxxxx/TS_AUTHKEY=$ts_key/" .env
+    sed -i.bak "s/OPENAI_API_KEY=sk-xxxxxx/OPENAI_API_KEY=$oai_key/" .env
+    sed -i.bak "s/GITHUB_TOKEN=ghp_xxxxxx/GITHUB_TOKEN=$gh_token/" .env
+    rm .env.bak
 fi
 
 # 4. Ignite
