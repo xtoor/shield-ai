@@ -141,9 +141,9 @@ export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
 export SHELL=/usr/bin/zsh
 
 # Start the Gateway from the native home
-# We use explicit 0.0.0.0 bind to override everything
+# Use Port 18793 for relay to avoid collision with VNC HUD on 18792
 cd /home/agent
-openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN"
+openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN" --browser-relay-port 18793
 
 # Final Guard: Keep container alive for log inspection if primary process exits
 echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
