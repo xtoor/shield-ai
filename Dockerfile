@@ -57,6 +57,10 @@ RUN mkdir -p /usr/share/keyrings && \
 RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Ensure agent owns their home and OpenClaw directories
+RUN mkdir -p /home/agent/.openclaw/workspace && \
+    chown -R agent:agent /home/agent/.openclaw
+
 # Set up ClamAV permissions for the socket
 RUN mkdir -p /var/run/clamav && \
     chown -R clamav:clamav /var/run/clamav && \

@@ -72,7 +72,8 @@ if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
     echo '{"gateway":{"mode":"local","port":18789,"auth":{"mode":"token","token":"shield-ai-default-token-12345"}}}' > /home/agent/.openclaw/openclaw.json
 fi
 cd /home/agent/.openclaw/workspace
-openclaw gateway run --port 18789 --allow-unconfigured --token shield-ai-default-token-12345
+export OPENCLAW_GATEWAY_TOKEN="shield-ai-default-token-12345"
+openclaw gateway run --port 18789 --allow-unconfigured --token "$OPENCLAW_GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
 echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
