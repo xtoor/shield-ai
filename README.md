@@ -1,3 +1,7 @@
+<div align="center">
+
+![SHIELD.ai Logo](shield_logo.jpg)
+
 # SHIELD.ai - The Infiltrator Build ⚔️🛡️💻
 
 A sovereign, high-security AI operations environment. Bundling **OpenClaw** with **Kali Linux**, hardened for professional development and offensive security.
