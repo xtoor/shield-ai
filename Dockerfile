@@ -41,6 +41,9 @@ RUN npm install -g playwright && \
     xvfb x11vnc fluxbox novnc \
     && apt-get clean
 
+# Optimize noVNC default entry point (Auto-connect + Local Scaling)
+RUN echo "<html><head><meta http-equiv='refresh' content='0; url=vnc.html?autoconnect=true&scale=local'></head></html>" > /usr/share/novnc/index.html
+
 # 4. Collaborative Forge (code-server)
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 

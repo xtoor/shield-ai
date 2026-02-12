@@ -53,6 +53,7 @@ fi
 if [ -n "$NOVNC_LAUNCHER" ]; then
     echo "[*] Launching noVNC via: $NOVNC_LAUNCHER"
     $NOVNC_LAUNCHER --vnc localhost:5900 --listen 18792 &
+    echo "[*] Visual HUD optimized link: http://localhost:18792/"
 else
     echo "[!] Warning: noVNC launcher not found. Checking alternate paths..."
     # Try common locations if find failed
@@ -63,6 +64,7 @@ else
     else
         echo "[!] Error: noVNC bridge could not be established."
     fi
+    echo "[*] Visual HUD optimized link: http://localhost:18792/"
 fi
 
 # 5. Launch OpenClaw
