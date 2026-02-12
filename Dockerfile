@@ -19,7 +19,7 @@ RUN apt-get update && apt-get upgrade -y && \
     net-tools iputils-ping \
     && apt-get clean
 
-# Initialize Antivirus
+# Initialize Antivirus Database
 RUN freshclam || true
 
 # 2. Infiltrator Arsenal (Top 10 Kali Tools)
@@ -45,28 +45,21 @@ RUN npm install -g playwright && \
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # 5. Networking & Stealth (Tunnels) - MUST RUN AS ROOT
-# Install Tailscale (Manual apt-based install for stability)
-RUN mkdir -p /usr/share/keyrings && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list && \
-    apt-get update && apt-get install -y tailscale && \
-    apt-get clean
-
-# Install Cloudflare Warp (Using Debian Bookworm repo for Kali compatibility)
-RUN curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
+RUN curl -fsSL https://tailscale.com/install.sh | sh && \
+    mkdir -p /usr/share/keyrings && \
+    curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
     apt-get update && apt-get install -y cloudflare-warp && \
     apt-get clean
 
-# 6. Agent Setup
-# Create non-root user for the agent
+# 6. Agent Setup & Permissions
 RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Create ClamAV runtime directory and set permissions
-RUN mkdir -p /home/agent/.clamav && \
-    chown -R agent:agent /home/agent/.clamav && \
-    chmod 750 /home/agent/.clamav
+# Set up ClamAV permissions for the socket
+RUN mkdir -p /var/run/clamav && \
+    chown -R clamav:clamav /var/run/clamav && \
+    chmod 775 /var/run/clamav
 
 # Set npm global path to avoid root-only directories
 ENV NPM_CONFIG_PREFIX=/home/agent/.npm-global
@@ -75,15 +68,15 @@ ENV PATH=$PATH:/home/agent/.npm-global/bin
 WORKDIR /home/agent
 USER agent
 
-# Install OpenClaw Core (Local to user global bin)
+# Install OpenClaw Core
 RUN mkdir -p /home/agent/.npm-global && \
     npm install -g openclaw
 
 # 6.1 Persona Injection (The Skalitz Protocol)
+RUN mkdir -p /home/agent/.openclaw/workspace
 COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
 
 # 7. Entrypoint & Ports
-# Ports: 18791 (IDE), 18792 (noVNC), 18789 (OpenClaw)
 EXPOSE 18791 18792 18789
 
 # Copy tactical scripts
