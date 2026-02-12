@@ -111,7 +111,8 @@ cat <<EOF > /home/agent/.openclaw/openclaw.json
       "openrouter": {
         "baseUrl": "https://openrouter.ai/api/v1",
         "apiKey": "\${OPENROUTER_API_KEY}",
-        "api": "openai-completions"
+        "api": "openai-completions",
+        "models": []
       }
     }
   },
