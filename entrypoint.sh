@@ -71,31 +71,42 @@ fi
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
-sudo chown -R agent:agent /home/agent/.openclaw /home/agent/workspace
-mkdir -p /home/agent/workspace
-mkdir -p /home/agent/sessions
+
+# Ensure agent ownership
+sudo chown -R agent:agent /home/agent
+
+# Setup internal storage for sessions/workspace to bypass Windows host mount restrictions (colons)
+mkdir -p /home/agent/internal_sessions
+mkdir -p /home/agent/internal_workspace
+
+# Create symlinks in the config directory to redirect storage to container-native filesystem
+# This keeps the config file on the host but moves the "troublesome" folders inside.
+if [ -d "/home/agent/.openclaw" ]; then
+    [ -L "/home/agent/.openclaw/sessions" ] || (rm -rf /home/agent/.openclaw/sessions && ln -s /home/agent/internal_sessions /home/agent/.openclaw/sessions)
+    [ -L "/home/agent/.openclaw/workspace" ] || (rm -rf /home/agent/.openclaw/workspace && ln -s /home/agent/internal_workspace /home/agent/.openclaw/workspace)
+fi
 
 # Use provided token or default
 GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
     echo "[*] Initializing default OpenClaw configuration..."
-    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"lan\",\"workspace\":\"/home/agent/workspace\",\"controlUi\":{\"enabled\":true,\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}},\"sessions\":{\"path\":\"/home/agent/sessions\"},\"browser\":{\"service\":{\"relayPort\":18793}}}" > /home/agent/.openclaw/openclaw.json
+    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"0.0.0.0\",\"controlUi\":{\"enabled\":true,\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}}}" > /home/agent/.openclaw/openclaw.json
 else
     echo "[*] Existing configuration detected. Hardening for container environment..."
     if command -v jq &>/dev/null; then
         tmp_cfg=$(mktemp)
-        # Force paths to be container-safe. Note: OpenClaw v2026.2.9 doctor rejects 'gateway.workspace' and 'sessions' at root.
-        # We will stop injecting the unrecognized keys and just use CLI flags to ensure stability.
-        jq '.gateway.bind = "lan" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.workspace) | del(.sessions)' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
+        # Force bind and UI, and remove troublesome keys that trigger the doctor
+        jq '.gateway.bind = "0.0.0.0" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.workspace) | del(.sessions)' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
     fi
 fi
 
-# Switch to the internal home directory for startup
-cd /home/agent
+# Final environment hardening
 export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
-# We use the internal home as the working directory to ensure agent stability
-# Explicitly binding to 0.0.0.0 (lan) and providing token via CLI
+export SHELL=/usr/bin/zsh
+
+# Start the Gateway from the native home
+cd /home/agent
 openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
