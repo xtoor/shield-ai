@@ -83,6 +83,11 @@ EXPOSE 18791 18792 18789
 
 # Copy tactical scripts
 COPY --chown=agent:agent entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
 
+# Fix Windows line endings and set permissions as root
+USER root
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/entrypoint.sh
+
+USER agent
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
