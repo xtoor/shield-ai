@@ -96,7 +96,10 @@ else
     echo "[*] Existing configuration detected. Hardening for container environment..."
     if command -v jq &>/dev/null; then
         tmp_cfg=$(mktemp)
-        # Force bind and UI, and remove troublesome keys that trigger the doctor
+        # OpenClaw v2026.2.9: 
+        # - 'lan' is not a valid 'bind' value in the config file (only for CLI --bind).
+        # - Must use "0.0.0.0" for LAN binding in openclaw.json.
+        # - Doctor rejects 'gateway.workspace' and 'sessions' at root.
         jq '.gateway.bind = "0.0.0.0" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.workspace) | del(.sessions)' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
     fi
 fi
