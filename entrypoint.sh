@@ -40,7 +40,7 @@ export DISPLAY=:99
 sleep 5
 fluxbox &
 sleep 2
-x11vnc -display :99 -forever -nopw -listen localhost -xkb -shared &
+x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb -shared &
 sleep 2
 
 # Find noVNC proxy dynamically
