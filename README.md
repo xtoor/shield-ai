@@ -21,6 +21,8 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 - **Stealth:** Native Tailscale/Twingate support for zero-trust networking.
 - **Persona:** Pre-injected with the **Henry of Skalitz** AI persona and the full specialized skill library.
 
+## DISCLAIMER I AM NOT LIABLE IN ANY SHAPE OR FORM FOR MISUSE OF THIS SOFTWARE... IT IS POWERFULL AND CAN BE DANGEROUS TO PEOPLE THAT DON'T KNOW WHAT THEY DOING... USE ETHICALLY USE AT YOUR OWN RISK!
+
 ## 🚀 One-Line Start (Any OS)
 Ensure you have Docker and Docker Compose installed, then run:
 
@@ -55,6 +57,7 @@ SHIELD.ai follows the **Standard of Skalitz**:
 - **Rule 1:** Inspect & Preview all products before submission.
 - **Rule 2:** Maintain absolute secret isolation.
 - **Rule 3:** For any OpenClaw core issues, refer to the [OpenClaw Documentation](https://docs.openclaw.ai).
+
 
 ---
 *Forged by the Kingdom of Skalitz* ⚔️🛡️
