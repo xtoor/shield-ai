@@ -83,13 +83,13 @@ mkdir -p /home/agent/internal_workspace
 GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 # We write a clean config from scratch to ensure no "illegal" keys are present.
-# We use "loopback" in the JSON to satisfy the Doctor, and override with 0.0.0.0 via CLI.
+# We use IP binding in the JSON as the Doctor seems to be oscillating on enums.
 cat <<EOF > /home/agent/.openclaw/openclaw.json
 {
   "gateway": {
     "mode": "local",
     "port": 18789,
-    "bind": "loopback",
+    "bind": "0.0.0.0",
     "auth": {
       "mode": "token",
       "token": "$GATEWAY_TOKEN",
@@ -130,7 +130,7 @@ export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
 export SHELL=/usr/bin/zsh
 
 # Start the Gateway from the native home
-# We use explicit 0.0.0.0 bind to override the "loopback" in config for external access
+# We use explicit 0.0.0.0 bind to override everything
 cd /home/agent
 openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN"
 
