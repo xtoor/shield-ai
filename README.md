@@ -57,6 +57,18 @@ Once the build is complete, you can access the command center:
 - **Visual HUD (noVNC):** `http://localhost:18792`
 - **Collaborative IDE:** `http://localhost:18791`
 
+## 🗑️ Decommissioning (Uninstall)
+
+### **Linux & macOS (Bash)**
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/uninstall.sh)"
+```
+
+### **Windows (PowerShell)**
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/xtoor/shield-ai/main/uninstall.ps1'))
+```
+
 ## ⚖️ Directives
 SHIELD.ai follows the **Standard of Skalitz**:
 - **Rule 1:** Inspect & Preview all products before submission.

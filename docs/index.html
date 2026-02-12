@@ -162,6 +162,24 @@
         </div>
     </section>
 
+    <!-- DECOMMISSION -->
+    <section id="uninstall" class="py-20 px-4 opacity-60">
+        <div class="max-w-4xl mx-auto">
+            <h3 class="text-xl font-bold mb-8 text-red-500 underline text-center">Decommissioning Protocol (Uninstall)</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded text-[10px] leading-loose">
+                    <div class="text-gray-600 italic mb-2">linux_macos_uninstall.sh</div>
+                    <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/uninstall.sh)"</code>
+                </div>
+                <div class="bg-[#0a0a0a] border border-red-900/30 p-4 rounded text-[10px] leading-loose">
+                    <div class="text-gray-600 italic mb-2">windows_uninstall.ps1</div>
+                    <code>Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/xtoor/shield-ai/main/uninstall.ps1'))</code>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FOOTER -->
     <footer class="py-12 border-t border-green-900/30 text-center opacity-40">
         <p class="text-[10px]">Forged by the Kingdom of Skalitz | Henry of Skalitz AI v2.9</p>
