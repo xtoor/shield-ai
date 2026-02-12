@@ -83,7 +83,7 @@ mkdir -p /home/agent/internal_workspace
 GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 # We write a clean config from scratch to ensure no "illegal" keys are present
-# and all networking binds are IP-based as required by the doctor.
+# and all networking binds use explicit mode names as required by the doctor.
 cat <<EOF > /home/agent/.openclaw/openclaw.json
 {
   "gateway": {
