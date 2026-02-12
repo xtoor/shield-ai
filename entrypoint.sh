@@ -76,10 +76,10 @@ GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
     echo "[*] Initializing default OpenClaw configuration..."
-    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}},\"browser\":{\"service\":{\"relayPort\":18793}}}" > /home/agent/.openclaw/openclaw.json
+    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"lan\",\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}},\"browser\":{\"service\":{\"relayPort\":18793}}}" > /home/agent/.openclaw/openclaw.json
 fi
 cd /home/agent/.openclaw/workspace
-openclaw gateway run --port 18789 --allow-unconfigured --token "$GATEWAY_TOKEN"
+openclaw gateway run --port 18789 --bind lan --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
 echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
