@@ -49,11 +49,11 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh
 RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Install OpenClaw Core (As ROOT to allow global install)
+RUN npm install -g openclaw
+
 WORKDIR /home/agent
 USER agent
-
-# Install OpenClaw Core
-RUN npm install -g openclaw
 
 # 5.1 Persona Injection (The Skalitz Protocol)
 COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
