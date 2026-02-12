@@ -31,7 +31,7 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 ```
 
 ### **Windows (PowerShell)**
-> **⚠️ Required:** Open PowerShell as **Administrator** before running this command.
+> **⚠️ Required:** Open **Docker Desktop** and run PowerShell as **Administrator** before running this command.
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/xtoor/shield-ai/main/install.ps1'))
