@@ -81,6 +81,8 @@ Once the build is complete, you can access the command center:
 - **Visual HUD (noVNC):** `http://localhost:18792`
 - **Collaborative IDE:** `http://localhost:18791`
 
+> **Note:** Inside the container, the gateway is managed automatically. Do not use `openclaw gateway start` (which requires systemd); use `openclaw gateway run` for manual debugging.
+
 ## 🗑️ Decommissioning (Uninstall)
 
 ### **Linux & macOS (Bash)**
