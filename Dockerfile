@@ -63,6 +63,11 @@ RUN curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor
 RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
+# Create ClamAV runtime directory and set permissions
+RUN mkdir -p /var/run/clamav && \
+    chown -R agent:agent /var/run/clamav && \
+    chmod 750 /var/run/clamav
+
 # Set npm global path to avoid root-only directories
 ENV NPM_CONFIG_PREFIX=/home/agent/.npm-global
 ENV PATH=$PATH:/home/agent/.npm-global/bin

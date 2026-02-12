@@ -39,7 +39,4 @@ x11vnc -display :99 -forever -nopw -listen localhost -xkb &
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
-openclaw gateway start --port 18789
-
-# Keep container alive
-tail -f /dev/null
+openclaw gateway run --port 18789
