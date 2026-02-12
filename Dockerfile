@@ -55,6 +55,9 @@ USER agent
 # Install OpenClaw Core
 RUN npm install -g openclaw
 
+# 5.1 Persona Injection (The Skalitz Protocol)
+COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
+
 # 6. Networking & Stealth (Tunnels)
 RUN curl -fsSL https://tailscale.com/install.sh | sh && \
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \

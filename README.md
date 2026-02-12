@@ -9,6 +9,7 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 - **IDE:** Integrated **VS Code** via `code-server` (Port 18791).
 - **Arsenal:** Pre-installed Top 10 Kali tools (Nmap, Metasploit, SQLmap, etc.).
 - **Stealth:** Native Tailscale/Twingate support for zero-trust networking.
+- **Persona:** Pre-injected with the **Henry of Skalitz** AI persona and the full specialized skill library.
 
 ## 🚀 One-Line Start (Any OS)
 Ensure you have Docker and Docker Compose installed, then run:
