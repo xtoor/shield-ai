@@ -83,14 +83,16 @@ else
     echo "[*] Existing configuration detected. Hardening for container environment..."
     if command -v jq &>/dev/null; then
         tmp_cfg=$(mktemp)
-        # Force paths to be container-safe (avoiding Windows colon issue on mounts)
-        jq '.gateway.bind = "lan" | .gateway.workspace = "/home/agent/workspace" | .sessions.path = "/home/agent/sessions" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
+        # Force paths to be container-safe. Note: OpenClaw v2026.2.9 doctor rejects 'gateway.workspace' and 'sessions' at root.
+        # We will stop injecting the unrecognized keys and just use CLI flags to ensure stability.
+        jq '.gateway.bind = "lan" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true | del(.gateway.workspace) | del(.sessions)' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
     fi
 fi
 
 # Switch to the internal home directory for startup
 cd /home/agent
 export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
+# We use the internal home as the working directory to ensure agent stability
 openclaw gateway run --port 18789 --bind lan --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
