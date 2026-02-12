@@ -23,7 +23,9 @@ if (!(Test-Path "shield-ai")) {
     git clone https://github.com/xtoor/shield-ai.git
     Set-Location shield-ai
 } else {
+    Write-Host "[*] Updating existing SHIELD.ai workspace..." -ForegroundColor Gray
     Set-Location shield-ai
+    git pull origin main
 }
 
 # 3. Interactive Config (if .env missing)

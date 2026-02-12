@@ -15,7 +15,9 @@ if [ ! -d "shield-ai" ]; then
     git clone https://github.com/xtoor/shield-ai.git
     cd shield-ai
 else
+    echo "[*] Updating existing SHIELD.ai workspace..."
     cd shield-ai
+    git pull origin main
 fi
 
 # 3. Interactive Config (if .env missing)
