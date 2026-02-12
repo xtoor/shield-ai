@@ -139,13 +139,25 @@
     <section id="quickstart" class="py-20 px-4">
         <div class="max-w-4xl mx-auto reveal">
             <h3 class="text-2xl font-bold mb-8 glow-text">[ RAPID_DEPLOYMENT ]</h3>
-            <div class="bg-[#0a0a0a] border border-green-900 p-6 rounded-lg text-xs leading-loose relative group overflow-hidden">
-                <div class="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-                <div class="absolute top-2 right-4 text-[10px] text-gray-600 italic">one_liner.sh</div>
-                <code class="text-white block overflow-x-auto relative z-10">
-                    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/install.sh)"
-                </code>
+            
+            <div class="space-y-6">
+                <!-- Linux/Mac -->
+                <div class="bg-[#0a0a0a] border border-green-900 p-6 rounded-lg text-xs leading-loose relative group overflow-hidden">
+                    <div class="absolute top-2 right-4 text-[10px] text-gray-600 italic">linux_macos_bash.sh</div>
+                    <code class="text-white block overflow-x-auto relative z-10">
+                        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/install.sh)"
+                    </code>
+                </div>
+
+                <!-- Windows -->
+                <div class="bg-[#0a0a0a] border border-green-900 p-6 rounded-lg text-xs leading-loose relative group overflow-hidden">
+                    <div class="absolute top-2 right-4 text-[10px] text-gray-600 italic">windows_powershell.ps1</div>
+                    <code class="text-white block overflow-x-auto relative z-10">
+                        Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/xtoor/shield-ai/main/install.ps1'))
+                    </code>
+                </div>
             </div>
+            
             <p class="mt-6 text-[10px] text-gray-600 italic text-center">Ensure Docker & Docker Compose are installed before initialization.</p>
         </div>
     </section>

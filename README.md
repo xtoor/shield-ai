@@ -23,11 +23,16 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 
 ## DISCLAIMER I AM NOT LIABLE IN ANY SHAPE OR FORM FOR MISUSE OF THIS SOFTWARE... IT IS POWERFULL AND CAN BE DANGEROUS TO PEOPLE THAT DON'T KNOW WHAT THEY DOING... USE ETHICALLY USE AT YOUR OWN RISK!
 
-## 🚀 One-Line Start (Any OS)
-Ensure you have Docker and Docker Compose installed, then run:
+## 🚀 Rapid Deployment (One-Line Start)
 
+### **Linux & macOS (Bash)**
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/install.sh)"
+```
+
+### **Windows (PowerShell)**
+```powershell
+Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/xtoor/shield-ai/main/install.ps1'))
 ```
 
 ## 🛠️ Manual Installation
