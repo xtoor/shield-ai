@@ -37,9 +37,22 @@ if (!(Test-Path ".env")) {
     $oai_key = Read-Host "OpenAI API Key"
     $gh_token = Read-Host "GitHub Token"
 
-    (Get-Content .env) -replace "TS_AUTHKEY=tskey-auth-xxxxxx", "TS_AUTHKEY=$ts_key" `
-                  -replace "OPENAI_API_KEY=sk-xxxxxx", "OPENAI_API_KEY=$oai_key" `
-                  -replace "GITHUB_TOKEN=ghp_xxxxxx", "GITHUB_TOKEN=$gh_token" | Set-Content .env
+    # Generate a default secure token for OpenClaw
+    $randomBytes = New-Object Byte[] 32
+    (New-Object Security.Cryptography.RNGCryptoServiceProvider).GetBytes($randomBytes)
+    $oc_token = [System.BitConverter]::ToString($randomBytes).Replace("-", "").ToLower()
+
+    $envContent = Get-Content .env
+    $envContent = $envContent -replace "TS_AUTHKEY=tskey-auth-xxxxxx", "TS_AUTHKEY=$ts_key" `
+                              -replace "OPENAI_API_KEY=sk-xxxxxx", "OPENAI_API_KEY=$oai_key" `
+                              -replace "GITHUB_TOKEN=ghp_xxxxxx", "GITHUB_TOKEN=$gh_token"
+    
+    if ($envContent -match "OPENCLAW_GATEWAY_TOKEN=") {
+        $envContent = $envContent -replace "OPENCLAW_GATEWAY_TOKEN=.*", "OPENCLAW_GATEWAY_TOKEN=$oc_token"
+    } else {
+        $envContent += "OPENCLAW_GATEWAY_TOKEN=$oc_token"
+    }
+    $envContent | Set-Content .env
 }
 
 # 4. Ignite

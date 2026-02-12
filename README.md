@@ -24,10 +24,25 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 ## DISCLAIMER I AM NOT LIABLE IN ANY SHAPE OR FORM FOR MISUSE OF THIS SOFTWARE... IT IS POWERFULL AND CAN BE DANGEROUS TO PEOPLE THAT DON'T KNOW WHAT THEY DOING... USE ETHICALLY USE AT YOUR OWN RISK!
 
 ## Current Status:
-- Windows: testing
-- Linux:   untested
-- MacOS:   untested
+- Windows: [![Tested - Windows](https://img.shields.io/badge/Tested-Windows-brightgreen?style=for-the-badge&logo=windows)](https://github.com/xtoor/shield-ai)
+- MacOS:   [![Untested - MacOS](https://img.shields.io/badge/Untested-MacOS-red?style=for-the-badge&logo=apple)](https://github.com/xtoor/shield-ai)
+- Linux:   [![Untested - Linux](https://img.shields.io/badge/Untested-Linux-red?style=for-the-badge&logo=linux)](https://github.com/xtoor/shield-ai)
 - Contributors are Welcome
+
+## 🔐 Security: Mandatory Token Update
+By default, SHIELD.ai initializes with a generic token. For your safety, you **MUST** generate a unique secure token before exposing the gateway to any network.
+
+### **Generate Token (Linux & macOS)**
+```bash
+chmod +x gen_token.sh
+./gen_token.sh
+```
+
+### **Generate Token (Windows)**
+```powershell
+.\gen_token.ps1
+```
+*Note: This script updates your `.env` file. You will need to rebuild the container (`docker-compose up -d --build`) to apply the new secret.*
 
 ## 🚀 Rapid Deployment (One-Line Start)
 

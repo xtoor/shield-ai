@@ -36,10 +36,20 @@ if [ ! -f ".env" ]; then
     read -p "OpenAI API Key: " oai_key
     read -p "GitHub Token: " gh_token
     
+    # Generate a default secure token for OpenClaw
+    oc_token=$(openssl rand -hex 32 2>/dev/null || LC_ALL=C tr -dc 'a-f0-9' < /dev/urandom | head -c 64)
+
     # Use a backup extension for sed to maintain compatibility between GNU (Linux) and BSD (macOS)
     sed -i.bak "s/TS_AUTHKEY=tskey-auth-xxxxxx/TS_AUTHKEY=$ts_key/" .env
     sed -i.bak "s/OPENAI_API_KEY=sk-xxxxxx/OPENAI_API_KEY=$oai_key/" .env
     sed -i.bak "s/GITHUB_TOKEN=ghp_xxxxxx/GITHUB_TOKEN=$gh_token/" .env
+    
+    if grep -q "OPENCLAW_GATEWAY_TOKEN=" .env; then
+        sed -i.bak "s/OPENCLAW_GATEWAY_TOKEN=.*/OPENCLAW_GATEWAY_TOKEN=$oc_token/" .env
+    else
+        echo "OPENCLAW_GATEWAY_TOKEN=$oc_token" >> .env
+    fi
+
     rm .env.bak
 fi
 
