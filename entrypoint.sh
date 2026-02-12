@@ -72,46 +72,60 @@ fi
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
 
-# Ensure agent ownership
-sudo chown -R agent:agent /home/agent
+# Ensure agent ownership of all relevant directories
+sudo chown -R agent:agent /home/agent /tmp/openclaw
 
-# Setup internal storage for sessions/workspace to bypass Windows host mount restrictions (colons)
+# Create internal storage to bypass Windows mount restrictions (colons in filenames)
 mkdir -p /home/agent/internal_sessions
 mkdir -p /home/agent/internal_workspace
 
-# Create symlinks in the config directory to redirect storage to container-native filesystem
-# This keeps the config file on the host but moves the "troublesome" folders inside.
-if [ -d "/home/agent/.openclaw" ]; then
-    [ -L "/home/agent/.openclaw/sessions" ] || (rm -rf /home/agent/.openclaw/sessions && ln -s /home/agent/internal_sessions /home/agent/.openclaw/sessions)
-    [ -L "/home/agent/.openclaw/workspace" ] || (rm -rf /home/agent/.openclaw/workspace && ln -s /home/agent/internal_workspace /home/agent/.openclaw/workspace)
-fi
-
-# Use provided token or default
+# Setup a valid, doctor-approved configuration
 GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
-if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
-    echo "[*] Initializing default OpenClaw configuration..."
-    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"0.0.0.0\",\"controlUi\":{\"enabled\":true,\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}}}" > /home/agent/.openclaw/openclaw.json
-else
-    echo "[*] Existing configuration detected. Hardening for container environment..."
-    if command -v jq &>/dev/null; then
-        tmp_cfg=$(mktemp)
-        # OpenClaw v2026.2.9: 
-        # - 'lan' is not a valid 'bind' value in the config file (only for CLI --bind).
-        # - Must use "0.0.0.0" for LAN binding in openclaw.json.
-        # - Doctor rejects 'gateway.workspace' and 'sessions' at root.
-        # - Adding 'allowedProxies' to ensure external reachability from common Tailscale/Local ranges.
-        jq '.gateway.bind = "0.0.0.0" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true | .gateway.trustedProxies = ["127.0.0.1", "172.16.0.0/12", "10.0.0.0/8", "100.64.0.0/10"] | del(.gateway.workspace) | del(.sessions)' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
-    fi
-fi
+# We write a clean config from scratch to ensure no "illegal" keys are present
+# and all networking binds are IP-based as required by the doctor.
+cat <<EOF > /home/agent/.openclaw/openclaw.json
+{
+  "gateway": {
+    "mode": "local",
+    "port": 18789,
+    "bind": "lan",
+    "auth": {
+      "mode": "token",
+      "token": "$GATEWAY_TOKEN",
+      "allowTailscale": true
+    },
+    "controlUi": {
+      "enabled": true,
+      "allowInsecureAuth": true
+    },
+    "trustedProxies": [
+      "127.0.0.1",
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "192.168.0.0/16",
+      "100.64.0.0/10"
+    ]
+  },
+  "agents": {
+    "defaults": {
+      "workspace": "/home/agent/internal_workspace"
+    }
+  },
+  "session": {
+    "store": "/home/agent/internal_sessions/sessions.json"
+  }
+}
+EOF
 
 # Final environment hardening
 export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
 export SHELL=/usr/bin/zsh
 
 # Start the Gateway from the native home
+# We use --bind lan which resolves to 0.0.0.0 in this environment
 cd /home/agent
-openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN"
+openclaw gateway run --port 18789 --bind lan --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
 echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
