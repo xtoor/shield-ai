@@ -37,6 +37,8 @@ code-server --bind-addr 0.0.0.0:18791 --auth none &
 echo "[*] Establishing Visual HUD (noVNC)..."
 Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +extension RENDER +extension RANDR &
 export DISPLAY=:99
+export SHELL=/usr/bin/zsh
+export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/agent/.npm-global/bin
 sleep 5
 fluxbox &
 sleep 2

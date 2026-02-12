@@ -69,6 +69,11 @@ RUN mkdir -p /var/run/clamav && \
     chown -R clamav:clamav /var/run/clamav && \
     chmod 775 /var/run/clamav
 
+# Configure Fluxbox Menu and PATH
+RUN mkdir -p /home/agent/.fluxbox && \
+    echo '[begin] (Kali SHIELD)\n[exec] (Terminal) {x-terminal-emulator}\n[exec] (Chromium) {chromium --no-sandbox}\n[submenu] (Kali Tools)\n [exec] (Nmap) {x-terminal-emulator -e nmap}\n [exec] (Metasploit) {x-terminal-emulator -e msfconsole}\n[end]\n[submenu] (OpenClaw)\n [exec] (Henry UI) {chromium --no-sandbox http://localhost:18789}\n [exec] (IDE) {chromium --no-sandbox http://localhost:18791}\n[end]\n[restart] (Restart)\n[exit] (Exit)\n[end]' > /home/agent/.fluxbox/menu && \
+    chown -R agent:agent /home/agent/.fluxbox
+
 # Set npm global path to avoid root-only directories
 ENV NPM_CONFIG_PREFIX=/home/agent/.npm-global
 ENV PATH=$PATH:/home/agent/.npm-global/bin
