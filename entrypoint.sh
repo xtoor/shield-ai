@@ -145,7 +145,7 @@ export SHELL=/usr/bin/zsh
 # Force bind to 0.0.0.0 and disable browser auto-open to prevent stalls
 # Run in background with logging
 cd /home/agent
-openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN" --browser-relay-port 18793 --no-browser > /tmp/openclaw-gateway.log 2>&1 &
+/home/agent/.npm-global/bin/openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN" --browser-relay-port 18793 --no-browser > /tmp/openclaw-gateway.log 2>&1 &
 echo "[*] Henry is now listening in the background (Port 18789)."
 
 # Final Guard: Keep container alive for log inspection if primary process exits
