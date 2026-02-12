@@ -44,7 +44,21 @@ RUN npm install -g playwright && \
 # 4. Collaborative Forge (code-server)
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# 5. Agent Setup
+# 5. Networking & Stealth (Tunnels) - MUST RUN AS ROOT
+# Install Tailscale (Manual apt-based install for stability)
+RUN mkdir -p /usr/share/keyrings && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list && \
+    apt-get update && apt-get install -y tailscale && \
+    apt-get clean
+
+# Install Cloudflare Warp (Using Debian Bookworm repo for Kali compatibility)
+RUN curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
+    apt-get update && apt-get install -y cloudflare-warp && \
+    apt-get clean
+
+# 6. Agent Setup
 # Create non-root user for the agent
 RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -60,22 +74,8 @@ USER agent
 RUN mkdir -p /home/agent/.npm-global && \
     npm install -g openclaw
 
-# 5.1 Persona Injection (The Skalitz Protocol)
+# 6.1 Persona Injection (The Skalitz Protocol)
 COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
-
-# 6. Networking & Stealth (Tunnels)
-# Install Tailscale (Manual apt-based install for stability)
-RUN mkdir -p /usr/share/keyrings && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
-    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list && \
-    apt-get update && apt-get install -y tailscale && \
-    apt-get clean
-
-# Install Cloudflare Warp (Using Debian Bookworm repo for Kali compatibility)
-RUN curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
-    apt-get update && apt-get install -y cloudflare-warp && \
-    apt-get clean
 
 # 7. Entrypoint & Ports
 # Ports: 18791 (IDE), 18792 (noVNC), 18789 (OpenClaw)
