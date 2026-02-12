@@ -1,0 +1,49 @@
+# SHIELD.ai - The Infiltrator Build ⚔️🛡️💻
+
+A sovereign, high-security AI operations environment. Bundling **OpenClaw** with **Kali Linux**, hardened for professional development and offensive security.
+
+## ⚡ Features
+- **OS:** Kali Linux Rolling (Headless)
+- **Security:** ClamAV (Active Antivirus), AppArmor profiles, non-root execution.
+- **Visual HUD:** Real-time visual desktop via **noVNC** (Port 18792).
+- **IDE:** Integrated **VS Code** via `code-server` (Port 18791).
+- **Arsenal:** Pre-installed Top 10 Kali tools (Nmap, Metasploit, SQLmap, etc.).
+- **Stealth:** Native Tailscale/Twingate support for zero-trust networking.
+
+## 🚀 One-Line Start (Any OS)
+Ensure you have Docker and Docker Compose installed, then run:
+
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/install.sh)"
+```
+
+## 🛠️ Manual Installation
+
+1. **Clone the Forge:**
+   ```bash
+   git clone https://github.com/xtoor/shield-ai.git
+   cd shield-ai
+   ```
+
+2. **Prepare your Secrets:**
+   Copy `.env.example` to `.env` and fill in your keys.
+
+3. **Ignite the Forge:**
+   ```bash
+   docker-compose up -d --build
+   ```
+
+## 🦇 Operational Access
+Once the build is complete, you can access the command center:
+- **OpenClaw Gateway:** `http://localhost:18789`
+- **Visual HUD (noVNC):** `http://localhost:18792`
+- **Collaborative IDE:** `http://localhost:18791`
+
+## ⚖️ Directives
+SHIELD.ai follows the **Standard of Skalitz**:
+- **Rule 1:** Inspect & Preview all products before submission.
+- **Rule 2:** Maintain absolute secret isolation.
+- **Rule 3:** For any OpenClaw core issues, refer to the [OpenClaw Documentation](https://docs.openclaw.ai).
+
+---
+*Forged by the Kingdom of Skalitz* ⚔️🛡️

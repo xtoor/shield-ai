@@ -1,0 +1,20 @@
+services:
+  shield-ai:
+    build: .
+    container_name: shield-ai-infiltrator
+    ports:
+      - "18789:18789" # OpenClaw Gateway
+      - "18791:18791" # code-server (IDE)
+      - "18792:18792" # noVNC (Visual HUD)
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY} # Tailscale Auth Key
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - GROK_API_KEY=${GROK_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+    volumes:
+      - ./workspace:/home/agent/workspace
+      - ./config:/home/agent/.openclaw
+    restart: unless-stopped
+    privileged: true # Required for some Kali networking tools
+    shm_size: '2gb' # Required for stable browser/noVNC performance

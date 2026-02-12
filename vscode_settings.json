@@ -1,0 +1,11 @@
+{
+    "workbench.colorTheme": "Default Dark Modern",
+    "editor.fontFamily": "'Fira Code', monospace",
+    "editor.fontSize": 14,
+    "terminal.integrated.fontFamily": "'Fira Code', monospace",
+    "workbench.startupEditor": "none",
+    "explorer.confirmDelete": false,
+    "editor.minimap.enabled": false,
+    "workbench.activityBar.location": "top",
+    "editor.formatOnSave": true
+}
