@@ -5,7 +5,7 @@ Write-Host "--- SHIELD.ai Rapid Deployment (Windows) ---" -ForegroundColor Green
 # 1. Check for Docker Client & Server
 if (!(Get-Command docker -ErrorAction SilentlyContinue)) {
     Write-Error "Docker CLI not found. Please visit https://docs.docker.com/get-docker/"
-    exit
+    return
 }
 
 Write-Host "[*] Checking Docker Engine pulse..." -ForegroundColor Gray
@@ -13,7 +13,7 @@ $dockerCheck = docker version --format '{{.Server.Version}}' 2>$null
 if (!$dockerCheck) {
     Write-Host "[!] CRITICAL: Docker Client is available, but the Engine is not responding." -ForegroundColor Red
     Write-Host "Please ensure Docker Desktop is started and the whale icon is visible in your system tray." -ForegroundColor Yellow
-    exit
+    return
 }
 Write-Host "[+] Docker Engine is alive (v$dockerCheck)." -ForegroundColor Green
 
