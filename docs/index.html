@@ -12,16 +12,19 @@
             color: #00ff41;
             font-family: 'Fira Code', monospace;
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
         .glow-text { text-shadow: 0 0 10px #00ff4188; }
         .hud-border {
             border: 1px solid #1a1a1a;
             border-left: 4px solid #00ff41;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .hud-border:hover {
             border-color: #00ff41;
-            background: rgba(0, 255, 65, 0.05);
+            background: rgba(0, 255, 65, 0.08);
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px -10px rgba(0, 255, 65, 0.2);
         }
         .grid-bg {
             background-image: linear-gradient(#00ff4108 1px, transparent 1px), linear-gradient(90deg, #00ff4108 1px, transparent 1px);
@@ -30,14 +33,60 @@
         .clip-corner {
             clip-path: polygon(0 0, 100% 0, 100% 90%, 90% 100%, 0 100%);
         }
+        
+        /* Animations */
+        @keyframes scan {
+            0% { top: -100%; }
+            100% { top: 100%; }
+        }
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(0deg, transparent 0%, rgba(0, 255, 65, 0.1) 50%, transparent 100%);
+            animation: scan 8s linear infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); text-shadow: 0 0 10px #00ff4188; }
+            2% { transform: translate(-2px, 2px); text-shadow: 2px 0 red, -2px 0 blue; }
+            4% { transform: translate(2px, -2px); text-shadow: -2px 0 red, 2px 0 blue; }
+            6% { transform: translate(0); text-shadow: 0 0 10px #00ff4188; }
+        }
+        .glitch-hover:hover {
+            animation: glitch 0.3s linear infinite;
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .pulse-border {
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { border-color: rgba(0, 255, 65, 0.3); }
+            50% { border-color: rgba(0, 255, 65, 0.8); }
+            100% { border-color: rgba(0, 255, 65, 0.3); }
+        }
     </style>
 </head>
 <body class="grid-bg min-h-screen uppercase tracking-tighter">
+    <div class="scan-line"></div>
+
     <!-- NAV -->
     <nav class="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-green-900/30 p-4">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <span class="text-xl font-bold glow-text">SHIELD.ai</span>
+                <span class="text-xl font-bold glow-text animate-pulse">SHIELD.ai</span>
             </div>
             <div class="hidden md:flex gap-8 text-xs font-bold">
                 <a href="#features" class="hover:text-white transition">FEATURES</a>
@@ -51,13 +100,15 @@
     <!-- HERO -->
     <section class="pt-32 pb-20 px-4">
         <div class="max-w-5xl mx-auto text-center">
-            <img src="assets/shield_logo.jpg" class="w-full max-w-2xl mx-auto mb-12 shadow-2xl shadow-green-500/20 clip-corner border border-green-900" alt="SHIELD.ai Logo">
-            <h2 class="text-4xl md:text-6xl font-bold glow-text mb-6">THE INFILTRATOR BUILD</h2>
-            <p class="text-gray-500 max-w-2xl mx-auto text-sm md:text-base leading-relaxed">
+            <div class="reveal">
+                <img src="assets/shield_logo.jpg" class="w-full max-w-2xl mx-auto mb-12 shadow-2xl shadow-green-500/20 clip-corner border border-green-900 transition-all duration-700 hover:scale-[1.02]" alt="SHIELD.ai Logo">
+            </div>
+            <h2 class="text-4xl md:text-6xl font-bold glow-text mb-6 glitch-hover cursor-default">THE INFILTRATOR BUILD</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto text-sm md:text-base leading-relaxed reveal">
                 A sovereign, high-security AI operations environment. Hardened for professional development, defensive shielding, and offensive security research.
             </p>
-            <div class="mt-10 flex flex-wrap justify-center gap-4">
-                <a href="#quickstart" class="bg-green-600 text-black font-bold px-8 py-3 hover:bg-white transition clip-corner text-sm">INITIALIZE_SYSTEM</a>
+            <div class="mt-10 flex flex-wrap justify-center gap-4 reveal">
+                <a href="#quickstart" class="bg-green-600 text-black font-bold px-8 py-3 hover:bg-white transition clip-corner text-sm pulse-border border-2">INITIALIZE_SYSTEM</a>
                 <a href="https://github.com/xtoor/shield-ai" class="border border-green-600 px-8 py-3 hover:bg-green-900/20 transition clip-corner text-sm">SOURCE_CODE</a>
             </div>
         </div>
@@ -66,17 +117,17 @@
     <!-- FEATURES -->
     <section id="features" class="py-20 px-4 bg-black/40">
         <div class="max-w-7xl mx-auto">
-            <h3 class="text-2xl font-bold mb-12 underline text-center">Tactical Specifications</h3>
+            <h3 class="text-2xl font-bold mb-12 underline text-center reveal">Tactical Specifications</h3>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="hud-border p-6">
+                <div class="hud-border p-6 reveal" style="transition-delay: 0.1s;">
                     <h4 class="font-bold mb-3 flex items-center gap-2">🛡️ OS_HARDENING</h4>
                     <p class="text-xs text-gray-500 lowercase leading-relaxed">Kali Linux rolling base with integrated ClamAV Antivirus active at the kernel level. Non-root execution as standard.</p>
                 </div>
-                <div class="hud-border p-6">
+                <div class="hud-border p-6 reveal" style="transition-delay: 0.2s;">
                     <h4 class="font-bold mb-3 flex items-center gap-2">🎥 VISUAL_HUD</h4>
                     <p class="text-xs text-gray-500 lowercase leading-relaxed">Real-time visual desktop bridge via noVNC. Watch the agent's browser control and DOM manipulation in a secure window.</p>
                 </div>
-                <div class="hud-border p-6">
+                <div class="hud-border p-6 reveal" style="transition-delay: 0.3s;">
                     <h4 class="font-bold mb-3 flex items-center gap-2">⚔️ INFILTRATOR_ARSENAL</h4>
                     <p class="text-xs text-gray-500 lowercase leading-relaxed">Pre-installed suite of Top 10 Kali tools: Nmap, Metasploit, SQLmap, and more, ready for agentic invocation.</p>
                 </div>
@@ -86,11 +137,12 @@
 
     <!-- QUICKSTART -->
     <section id="quickstart" class="py-20 px-4">
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto reveal">
             <h3 class="text-2xl font-bold mb-8 glow-text">[ RAPID_DEPLOYMENT ]</h3>
-            <div class="bg-[#0a0a0a] border border-green-900 p-6 rounded-lg text-xs leading-loose relative group">
+            <div class="bg-[#0a0a0a] border border-green-900 p-6 rounded-lg text-xs leading-loose relative group overflow-hidden">
+                <div class="absolute inset-0 bg-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
                 <div class="absolute top-2 right-4 text-[10px] text-gray-600 italic">one_liner.sh</div>
-                <code class="text-white block overflow-x-auto">
+                <code class="text-white block overflow-x-auto relative z-10">
                     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/xtoor/shield-ai/main/install.sh)"
                 </code>
             </div>
@@ -102,5 +154,22 @@
     <footer class="py-12 border-t border-green-900/30 text-center opacity-40">
         <p class="text-[10px]">Forged by the Kingdom of Skalitz | Henry of Skalitz AI v2.9</p>
     </footer>
+
+    <script>
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+    </script>
 </body>
 </html>
