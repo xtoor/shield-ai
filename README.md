@@ -2,6 +2,12 @@
 
 ![SHIELD.ai Logo](shield_logo.jpg)
 
+[![Language - Python](https://img.shields.io/badge/Language-Python-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Language - TypeScript](https://img.shields.io/badge/Language-TypeScript-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Language - Shell](https://img.shields.io/badge/Language-Shell-green?style=for-the-badge&logo=gnubash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![Requirement - Docker](https://img.shields.io/badge/Requirement-Docker-blue?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Requirement - Compose](https://img.shields.io/badge/Requirement-Compose-blue?style=for-the-badge&logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+
 # SHIELD.ai - The Infiltrator Build ⚔️🛡️💻
 
 A sovereign, high-security AI operations environment. Bundling **OpenClaw** with **Kali Linux**, hardened for professional development and offensive security.
