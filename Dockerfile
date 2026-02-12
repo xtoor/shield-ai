@@ -45,11 +45,12 @@ RUN npm install -g playwright && \
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # 5. Networking & Stealth (Tunnels) - MUST RUN AS ROOT
-RUN curl -fsSL https://tailscale.com/install.sh | sh && \
-    mkdir -p /usr/share/keyrings && \
+RUN mkdir -p /usr/share/keyrings && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg | tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null && \
+    curl -fsSL https://pkgs.tailscale.com/stable/debian/bookworm.tailscale-keyring.list | tee /etc/apt/sources.list.d/tailscale.list && \
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
-    apt-get update && apt-get install -y cloudflare-warp && \
+    apt-get update && apt-get install -y tailscale cloudflare-warp && \
     apt-get clean
 
 # 6. Agent Setup & Permissions
