@@ -67,6 +67,10 @@ fi
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
 mkdir -p /home/agent/.openclaw/workspace
+if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
+    echo "[*] Initializing default OpenClaw configuration..."
+    echo '{"gateway":{"mode":"local","port":18789}}' > /home/agent/.openclaw/openclaw.json
+fi
 cd /home/agent/.openclaw/workspace
 openclaw gateway run --port 18789 --allow-unconfigured
 
