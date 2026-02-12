@@ -83,13 +83,12 @@ mkdir -p /home/agent/internal_workspace
 GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 # We write a clean config from scratch to ensure no "illegal" keys are present.
-# We use IP binding in the JSON as the Doctor seems to be oscillating on enums.
 cat <<EOF > /home/agent/.openclaw/openclaw.json
 {
   "gateway": {
     "mode": "local",
     "port": 18789,
-    "bind": "0.0.0.0",
+    "bind": "lan",
     "auth": {
       "mode": "token",
       "token": "$GATEWAY_TOKEN",
@@ -110,13 +109,24 @@ cat <<EOF > /home/agent/.openclaw/openclaw.json
   "models": {
     "providers": {
       "openrouter": {
-        "apiKey": "\${OPENROUTER_API_KEY}"
+        "baseUrl": "https://openrouter.ai/api/v1",
+        "apiKey": "\${OPENROUTER_API_KEY}",
+        "api": "openai-completions"
       }
     }
   },
   "agents": {
     "defaults": {
-      "workspace": "/home/agent/internal_workspace"
+      "workspace": "/home/agent/internal_workspace",
+      "model": {
+        "primary": "openrouter/z-ai/glm-4.5-air:free",
+        "fallbacks": [
+          "openrouter/tngtech/tng-r1t-chimera:free",
+          "openrouter/stepfun/step-3.5-flash:free",
+          "openrouter/qwen/qwen3-next-80b-a3b-instruct:free",
+          "openrouter/openai/gpt-oss-120b:free"
+        ]
+      }
     }
   },
   "session": {
