@@ -93,7 +93,8 @@ fi
 cd /home/agent
 export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
 # We use the internal home as the working directory to ensure agent stability
-openclaw gateway run --port 18789 --bind lan --allow-unconfigured --token "$GATEWAY_TOKEN"
+# Explicitly binding to 0.0.0.0 (lan) and providing token via CLI
+openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
 echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
