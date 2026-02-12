@@ -69,6 +69,7 @@ fi
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
+sudo chown -R agent:agent /home/agent/.openclaw /home/agent/workspace
 mkdir -p /home/agent/.openclaw/workspace
 
 # Use provided token or default
@@ -76,9 +77,17 @@ GATEWAY_TOKEN="${OPENCLAW_GATEWAY_TOKEN:-shield-ai-default-token-12345}"
 
 if [ ! -f "/home/agent/.openclaw/openclaw.json" ]; then
     echo "[*] Initializing default OpenClaw configuration..."
-    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"lan\",\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}},\"browser\":{\"service\":{\"relayPort\":18793}}}" > /home/agent/.openclaw/openclaw.json
+    echo "{\"gateway\":{\"mode\":\"local\",\"port\":18789,\"bind\":\"lan\",\"controlUi\":{\"enabled\":true,\"allowInsecureAuth\":true},\"auth\":{\"mode\":\"token\",\"token\":\"$GATEWAY_TOKEN\"}},\"browser\":{\"service\":{\"relayPort\":18793}}}" > /home/agent/.openclaw/openclaw.json
+else
+    echo "[*] Existing configuration detected. Ensuring bind and UI are enabled..."
+    # Use jq if available to safely update existing config
+    if command -v jq &>/dev/null; then
+        tmp_cfg=$(mktemp)
+        jq '.gateway.bind = "lan" | .gateway.controlUi.enabled = true | .gateway.controlUi.allowInsecureAuth = true' /home/agent/.openclaw/openclaw.json > "$tmp_cfg" && mv "$tmp_cfg" /home/agent/.openclaw/openclaw.json
+    fi
 fi
 cd /home/agent/.openclaw/workspace
+export OPENCLAW_GATEWAY_TOKEN="$GATEWAY_TOKEN"
 openclaw gateway run --port 18789 --bind lan --allow-unconfigured --token "$GATEWAY_TOKEN"
 
 # Final Guard: Keep container alive for log inspection if primary process exits
