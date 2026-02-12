@@ -40,8 +40,10 @@ export DISPLAY=:99
 sleep 2
 fluxbox &
 x11vnc -display :99 -forever -nopw -listen localhost -xkb &
+sleep 2
 
 # Find noVNC proxy dynamically
+echo "[*] Scanning for noVNC launcher..."
 NOVNC_LAUNCHER=$(find /usr -name "novnc_proxy" | head -n 1)
 if [ -z "$NOVNC_LAUNCHER" ]; then
     NOVNC_LAUNCHER=$(find /usr -name "launch.sh" | grep "novnc" | head -n 1)
@@ -51,11 +53,23 @@ if [ -n "$NOVNC_LAUNCHER" ]; then
     echo "[*] Launching noVNC via: $NOVNC_LAUNCHER"
     $NOVNC_LAUNCHER --vnc localhost:5900 --listen 18792 &
 else
-    echo "[!] Warning: noVNC launcher not found. UI may be unavailable."
+    echo "[!] Warning: noVNC launcher not found. Checking alternate paths..."
+    # Try common locations if find failed
+    if [ -f "/usr/bin/novnc_proxy" ]; then
+        /usr/bin/novnc_proxy --vnc localhost:5900 --listen 18792 &
+    elif [ -f "/usr/share/novnc/utils/novnc_proxy" ]; then
+        /usr/share/novnc/utils/novnc_proxy --vnc localhost:5900 --listen 18792 &
+    else
+        echo "[!] Error: noVNC bridge could not be established."
+    fi
 fi
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
-# Ensure we are in the workspace
+mkdir -p /home/agent/.openclaw/workspace
 cd /home/agent/.openclaw/workspace
 openclaw gateway run --port 18789 --allow-unconfigured
+
+# Final Guard: Keep container alive for log inspection if primary process exits
+echo "[!] Primary process has terminated. Maintaining tunnel for diagnostics..."
+tail -f /dev/null
