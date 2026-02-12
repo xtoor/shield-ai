@@ -5,6 +5,10 @@ echo "--- SHIELD.ai Boot Sequence Initiated ---"
 
 # 1. Start Antivirus Daemon
 echo "[*] Starting ClamAV Defense..."
+# Update clamd config to use home dir for socket if config exists
+if [ -f "/etc/clamav/clamd.conf" ]; then
+    sudo sed -i 's|/var/run/clamav/clamd.ctl|/home/agent/.clamav/clamd.ctl|g' /etc/clamav/clamd.conf
+fi
 sudo clamd &
 
 # 2. Tailscale Integration (Optional)
@@ -35,8 +39,9 @@ Xvfb :99 -screen 0 1920x1080x24 &
 export DISPLAY=:99
 fluxbox &
 x11vnc -display :99 -forever -nopw -listen localhost -xkb &
-/usr/share/novnc/utils/launch.sh --vnc localhost:5900 --listen 18792 &
+# Use standard novnc_proxy command instead of hardcoded path
+novnc_proxy --vnc localhost:5900 --listen 18792 &
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
-openclaw gateway run --port 18789
+openclaw gateway run --port 18789 --allow-unconfigured

@@ -64,9 +64,9 @@ RUN useradd -m -s /usr/bin/zsh agent && \
     echo "agent ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Create ClamAV runtime directory and set permissions
-RUN mkdir -p /var/run/clamav && \
-    chown -R agent:agent /var/run/clamav && \
-    chmod 750 /var/run/clamav
+RUN mkdir -p /home/agent/.clamav && \
+    chown -R agent:agent /home/agent/.clamav && \
+    chmod 750 /home/agent/.clamav
 
 # Set npm global path to avoid root-only directories
 ENV NPM_CONFIG_PREFIX=/home/agent/.npm-global
