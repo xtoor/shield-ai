@@ -23,6 +23,12 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 
 ## DISCLAIMER I AM NOT LIABLE IN ANY SHAPE OR FORM FOR MISUSE OF THIS SOFTWARE... IT IS POWERFULL AND CAN BE DANGEROUS TO PEOPLE THAT DON'T KNOW WHAT THEY DOING... USE ETHICALLY USE AT YOUR OWN RISK!
 
+## Current Status:
+- Windows: testing
+- Linux:   untested
+- MacOS:   untested
+- Contributors are Welcome
+
 ## 🚀 Rapid Deployment (One-Line Start)
 
 ### **Linux & macOS (Bash)**
