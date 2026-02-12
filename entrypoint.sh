@@ -33,13 +33,14 @@ fi
 echo "[*] Launching Collaborative Forge (IDE)..."
 code-server --bind-addr 0.0.0.0:18791 --auth none &
 
-# 4. Start noVNC (Visual HUD)
+# 3. Start noVNC (Visual HUD)
 echo "[*] Establishing Visual HUD (noVNC)..."
-Xvfb :99 -screen 0 1920x1080x24 &
+Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +extension RENDER +extension RANDR &
 export DISPLAY=:99
-sleep 2
+sleep 5
 fluxbox &
-x11vnc -display :99 -forever -nopw -listen localhost -xkb &
+sleep 2
+x11vnc -display :99 -forever -nopw -listen localhost -xkb -shared &
 sleep 2
 
 # Find noVNC proxy dynamically
