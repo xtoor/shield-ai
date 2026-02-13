@@ -25,7 +25,9 @@ RUN apt-get update && apt-get full-upgrade -y && \
     john \
     hydra \
     exploitdb \
-    xvfb x11vnc fluxbox novnc chromium feh zenity && \
+    xvfb x11vnc fluxbox novnc chromium feh zenity \
+    # Build tools for Python dependencies (pycairo, etc.)
+    build-essential python3-dev libcairo2-dev pkg-config && \
     # Clean up apt cache to reduce image size
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
