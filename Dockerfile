@@ -42,9 +42,9 @@ RUN npm install -g playwright && \
 RUN echo "<html><head><meta http-equiv='refresh' content='0; url=vnc.html?autoconnect=true&scale=local'></head></html>" > /usr/share/novnc/index.html
 
 # 4. Collaborative Forge (code-server)
-# Install via official script and ensure binary is in PATH
+# Install via official script and ensure binary is in PATH (Force link if exists)
 RUN curl -fsSL https://code-server.dev/install.sh | sh && \
-    ln -s /usr/lib/code-server/bin/code-server /usr/bin/code-server
+    ln -sf /usr/lib/code-server/bin/code-server /usr/bin/code-server
 
 # 5. Networking & Stealth (Tunnels) - MUST RUN AS ROOT
 RUN mkdir -p /usr/share/keyrings && \
