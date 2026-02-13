@@ -68,6 +68,15 @@ start_hud
     done
 ) &
 
+# 4. Auto-Clone The Brain (ChatDev-Penetrator)
+if [ ! -d "/home/agent/workspace/ChatDev-Penetrator" ]; then
+    echo "[*] Cloning ChatDev-Penetrator Logic..."
+    git clone https://github.com/xtoor/ChatDev-Penetrator.git /home/agent/workspace/ChatDev-Penetrator
+else
+    echo "[*] ChatDev-Penetrator already exists. Pulling latest updates..."
+    cd /home/agent/workspace/ChatDev-Penetrator && git pull
+fi
+
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
 
