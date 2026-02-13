@@ -33,6 +33,8 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 ## 🔐 Security: Mandatory Token Update
 By default, SHIELD.ai initializes with a generic token. For your safety, you **MUST** generate a unique secure token before exposing the gateway to any network.
 
+## You can use the built-in openclaw token generator by executing in your docker terminal: ```openclaw configure``` or use alternatives below:
+
 ### **Generate Token (Linux & macOS)**
 ```bash
 chmod +x gen_token.sh
@@ -104,4 +106,7 @@ SHIELD.ai follows the **Standard of Skalitz**:
 
 
 ---
+*Powered by [OpenClaw Project](https://openclaw.ai/), [Kali-Linux](https://www.kali.org/), [Docker](https://github.com/docker), [ChatDev-2.0](https://github.com/OpenBMB/ChatDev), [Remotion](https://github.com/remotion-dev/) and [Chatterbox](https://github.com/resemble-ai/chatterbox?tab=readme-ov-file) all rights reserved to its respective owners.
+
 *Forged by the Kingdom of Skalitz* ⚔️🛡️
+
