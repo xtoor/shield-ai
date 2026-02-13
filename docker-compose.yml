@@ -8,6 +8,8 @@ services:
       - "18792:18792" # noVNC (Visual HUD)
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY} # Tailscale Auth Key
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENCLAW_GATEWAY_TOKEN=${OPENCLAW_GATEWAY_TOKEN}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - GROK_API_KEY=${GROK_API_KEY}
