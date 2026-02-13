@@ -142,6 +142,8 @@ export SHELL=/usr/bin/zsh
 # Start the Gateway from the native home
 # Force bind to 0.0.0.0
 # Run in background with logging
+# Explicitly set browser relay port to 18793 via ENV (since CLI flag was rejected)
+export BROWSER_RELAY_PORT=18793
 cd /home/agent
 /home/agent/.npm-global/bin/openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN" > /tmp/openclaw-gateway.log 2>&1 &
 echo "[*] Henry is now listening in the background (Port 18789)."
