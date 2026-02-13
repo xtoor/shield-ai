@@ -83,8 +83,6 @@ Once the build is complete, you can access the command center:
 
 > **Note:** Inside the container, the gateway is managed automatically. Do not use `openclaw gateway start` (which requires systemd); use `openclaw gateway run` for manual debugging.
 
-### **Direct Connection (Host Control)**
-Want Henry to work directly on your host machine? Follow the [Node Pairing Guide](docs/NODE_PAIRING.md) to link your laptop to the SHIELD.ai gateway.
 
 ## 🗑️ Decommissioning (Uninstall)
 
