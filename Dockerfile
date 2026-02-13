@@ -34,10 +34,9 @@ RUN apt-get update && apt-get full-upgrade -y && \
 RUN freshclam || true
 
 # 2.5 DevAll Dependencies (ChatDev 2.0)
-# Install uv (Python Package Manager)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
-    mv /root/.cargo/bin/uv /usr/local/bin/uv && \
-    mv /root/.cargo/bin/uvx /usr/local/bin/uvx
+# Install uv via pip (More reliable in Docker than curl | sh)
+# We use --break-system-packages because we are in a container and want it global
+RUN pip3 install --no-cache-dir --break-system-packages uv
 
 # 3. GUI & Browser "The Sight"
 # Install Playwright globally for OpenClaw browser tool support
