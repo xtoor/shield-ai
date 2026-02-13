@@ -145,7 +145,11 @@ export SHELL=/usr/bin/zsh
 # Explicitly set browser relay port to 18793 via ENV (since CLI flag was rejected)
 export BROWSER_RELAY_PORT=18793
 cd /home/agent
-/home/agent/.npm-global/bin/openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token "$GATEWAY_TOKEN" > /tmp/openclaw-gateway.log 2>&1 &
+
+# Ensure environment variables are loaded for the background process
+# We wrap the command in a shell block to persist env vars
+/bin/bash -c "export OPENROUTER_API_KEY=\"$OPENROUTER_API_KEY\"; /home/agent/.npm-global/bin/openclaw gateway run --port 18789 --bind 0.0.0.0 --allow-unconfigured --token \"$GATEWAY_TOKEN\"" > /tmp/openclaw-gateway.log 2>&1 &
+
 echo "[*] Henry is now listening in the background (Port 18789)."
 
 # Final Guard: Keep container alive for log inspection if primary process exits
