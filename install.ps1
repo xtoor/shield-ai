@@ -98,3 +98,4 @@ Write-Host "--- SUCCESS: SHIELD.ai is Online ---" -ForegroundColor Green
 Write-Host "IDE: http://localhost:18791"
 Write-Host "HUD: http://localhost:18792"
 Write-Host "Agent: http://localhost:18789"
+Write-Host "ChatDev: http://localhost:5173 (Requires Manual Start)"

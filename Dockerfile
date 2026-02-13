@@ -33,6 +33,12 @@ RUN apt-get update && apt-get full-upgrade -y && \
 # Initialize Antivirus Database
 RUN freshclam || true
 
+# 2.5 DevAll Dependencies (ChatDev 2.0)
+# Install uv (Python Package Manager)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    mv /root/.cargo/bin/uv /usr/local/bin/uv && \
+    mv /root/.cargo/bin/uvx /usr/local/bin/uvx
+
 # 3. GUI & Browser "The Sight"
 # Install Playwright globally for OpenClaw browser tool support
 RUN npm install -g playwright && \
@@ -89,7 +95,8 @@ RUN mkdir -p /home/agent/.openclaw/workspace
 COPY --chown=agent:agent persona/ /home/agent/.openclaw/workspace/
 
 # 7. Entrypoint & Ports
-EXPOSE 18791 18792 18789
+# 18791 (IDE), 18792 (HUD), 18789 (Gateway), 6400 (ChatDev API), 5173 (ChatDev UI)
+EXPOSE 18791 18792 18789 6400 5173
 
 # Copy tactical scripts
 COPY --chown=agent:agent entrypoint.sh /usr/local/bin/entrypoint.sh

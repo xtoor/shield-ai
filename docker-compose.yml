@@ -6,6 +6,8 @@ services:
       - "18789:18789" # OpenClaw Gateway
       - "18791:18791" # code-server (IDE)
       - "18792:18792" # noVNC (Visual HUD)
+      - "6400:6400"   # ChatDev API
+      - "5173:5173"   # ChatDev Web UI
     environment:
       - TS_AUTHKEY=${TS_AUTHKEY} # Tailscale Auth Key
       - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
