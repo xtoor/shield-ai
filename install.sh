@@ -29,21 +29,55 @@ fi
 
 # 3. Interactive Config (if .env missing)
 if [ ! -f ".env" ]; then
-    echo "[*] Generating .env configuration..."
+    echo -e "\033[0;36m[*] Generating .env configuration...\033[0m"
     cp .env.example .env
-    echo "Please enter your keys (leave blank to skip):"
-    read -p "Tailscale Auth Key: " ts_key
-    read -p "OpenAI API Key: " oai_key
-    read -p "GitHub Token: " gh_token
     
-    # Generate a default secure token for OpenClaw
+    # --- Tailscale Configuration ---
+    read -p "Tailscale Auth Key (leave blank to skip): " ts_key
+    
+    # --- OpenRouter Configuration (Mandatory Prompt) ---
+    echo -e "\n\033[0;33m[!] OpenRouter API Key is REQUIRED for Henry to think.\033[0m"
+    echo -e "\033[0;90m    If you don't have one, get a free key here: https://openrouter.ai/keys\033[0m"
+    while true; do
+        read -p "OpenRouter API Key (sk-or-v1-...): " or_key
+        if [ -n "$or_key" ]; then
+            break
+        else
+            echo -e "    \033[0;31m[!] A key is required. Henry cannot function without a brain.\033[0m"
+        fi
+    done
+
+    # --- Optional APIs ---
+    read -p "GitHub Token (optional, for repo access): " gh_token
+    
+    # --- Generate Secure Gateway Token ---
+    echo -e "\n\033[0;90m[*] Forging a secure Gateway Token...\033[0m"
     oc_token=$(openssl rand -hex 32 2>/dev/null || LC_ALL=C tr -dc 'a-f0-9' < /dev/urandom | head -c 64)
 
-    # Use a backup extension for sed to maintain compatibility between GNU (Linux) and BSD (macOS)
-    sed -i.bak "s/TS_AUTHKEY=tskey-auth-xxxxxx/TS_AUTHKEY=$ts_key/" .env
-    sed -i.bak "s/OPENAI_API_KEY=sk-xxxxxx/OPENAI_API_KEY=$oai_key/" .env
-    sed -i.bak "s/GITHUB_TOKEN=ghp_xxxxxx/GITHUB_TOKEN=$gh_token/" .env
+    # --- Inject into .env (Using backup extension for cross-platform sed) ---
     
+    # Handle Tailscale
+    if [ -z "$ts_key" ]; then
+        sed -i.bak "s/TS_AUTHKEY=tskey-auth-xxxxxx/#TS_AUTHKEY=/" .env
+    else
+        sed -i.bak "s/TS_AUTHKEY=tskey-auth-xxxxxx/TS_AUTHKEY=$ts_key/" .env
+    fi
+
+    # Handle OpenRouter (Append if not present in example, or replace placeholder)
+    if grep -q "OPENROUTER_API_KEY=" .env; then
+        sed -i.bak "s/OPENROUTER_API_KEY=.*/OPENROUTER_API_KEY=$or_key/" .env
+    else
+        echo "OPENROUTER_API_KEY=$or_key" >> .env
+    fi
+
+    # Handle GitHub
+    if [ -z "$gh_token" ]; then
+        sed -i.bak "s/GITHUB_TOKEN=ghp_xxxxxx/#GITHUB_TOKEN=/" .env
+    else
+        sed -i.bak "s/GITHUB_TOKEN=ghp_xxxxxx/GITHUB_TOKEN=$gh_token/" .env
+    fi
+    
+    # Handle Gateway Token
     if grep -q "OPENCLAW_GATEWAY_TOKEN=" .env; then
         sed -i.bak "s/OPENCLAW_GATEWAY_TOKEN=.*/OPENCLAW_GATEWAY_TOKEN=$oc_token/" .env
     else
@@ -51,6 +85,7 @@ if [ ! -f ".env" ]; then
     fi
 
     rm .env.bak
+    echo -e "\033[0;32m[+] Configuration locked in .env\033[0m"
 fi
 
 # 4. Ignite

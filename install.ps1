@@ -30,29 +30,64 @@ if (!(Test-Path "shield-ai")) {
 
 # 3. Interactive Config (if .env missing)
 if (!(Test-Path ".env")) {
-    Write-Host "[*] Generating .env configuration..."
+    Write-Host "[*] Generating .env configuration..." -ForegroundColor Cyan
     Copy-Item .env.example .env
     
+    # --- Tailscale Configuration ---
     $ts_key = Read-Host "Tailscale Auth Key (leave blank to skip)"
-    $oai_key = Read-Host "OpenAI API Key"
-    $gh_token = Read-Host "GitHub Token"
+    
+    # --- OpenRouter Configuration (Mandatory Prompt) ---
+    Write-Host "`n[!] OpenRouter API Key is REQUIRED for Henry to think." -ForegroundColor Yellow
+    Write-Host "    If you don't have one, get a free key here: https://openrouter.ai/keys" -ForegroundColor Gray
+    do {
+        $or_key = Read-Host "OpenRouter API Key (sk-or-v1-...)"
+        if ([string]::IsNullOrWhiteSpace($or_key)) {
+            Write-Host "    [!] A key is required. Henry cannot function without a brain." -ForegroundColor Red
+        }
+    } until (![string]::IsNullOrWhiteSpace($or_key))
 
-    # Generate a default secure token for OpenClaw
+    # --- Optional APIs ---
+    $gh_token = Read-Host "GitHub Token (optional, for repo access)"
+
+    # --- Generate Secure Gateway Token ---
+    Write-Host "`n[*] Forging a secure Gateway Token..." -ForegroundColor Gray
     $randomBytes = New-Object Byte[] 32
     (New-Object Security.Cryptography.RNGCryptoServiceProvider).GetBytes($randomBytes)
     $oc_token = [System.BitConverter]::ToString($randomBytes).Replace("-", "").ToLower()
 
+    # --- Inject into .env ---
     $envContent = Get-Content .env
-    $envContent = $envContent -replace "TS_AUTHKEY=tskey-auth-xxxxxx", "TS_AUTHKEY=$ts_key" `
-                              -replace "OPENAI_API_KEY=sk-xxxxxx", "OPENAI_API_KEY=$oai_key" `
-                              -replace "GITHUB_TOKEN=ghp_xxxxxx", "GITHUB_TOKEN=$gh_token"
     
+    # Handle Tailscale
+    if ([string]::IsNullOrWhiteSpace($ts_key)) {
+        $envContent = $envContent -replace "TS_AUTHKEY=tskey-auth-xxxxxx", "#TS_AUTHKEY="
+    } else {
+        $envContent = $envContent -replace "TS_AUTHKEY=tskey-auth-xxxxxx", "TS_AUTHKEY=$ts_key"
+    }
+
+    # Handle OpenRouter (Use placeholder if not found, or append)
+    if ($envContent -match "OPENROUTER_API_KEY=") {
+        $envContent = $envContent -replace "OPENROUTER_API_KEY=.*", "OPENROUTER_API_KEY=$or_key"
+    } else {
+        $envContent += "`nOPENROUTER_API_KEY=$or_key"
+    }
+
+    # Handle GitHub
+    if ([string]::IsNullOrWhiteSpace($gh_token)) {
+        $envContent = $envContent -replace "GITHUB_TOKEN=ghp_xxxxxx", "#GITHUB_TOKEN="
+    } else {
+        $envContent = $envContent -replace "GITHUB_TOKEN=ghp_xxxxxx", "GITHUB_TOKEN=$gh_token"
+    }
+    
+    # Handle Gateway Token
     if ($envContent -match "OPENCLAW_GATEWAY_TOKEN=") {
         $envContent = $envContent -replace "OPENCLAW_GATEWAY_TOKEN=.*", "OPENCLAW_GATEWAY_TOKEN=$oc_token"
     } else {
-        $envContent += "OPENCLAW_GATEWAY_TOKEN=$oc_token"
+        $envContent += "`nOPENCLAW_GATEWAY_TOKEN=$oc_token"
     }
+
     $envContent | Set-Content .env
+    Write-Host "[+] Configuration locked in .env" -ForegroundColor Green
 }
 
 # 4. Ignite
