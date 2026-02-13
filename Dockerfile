@@ -10,20 +10,14 @@ LABEL project="SHIELD.ai"
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y \
+# Combine updates and installs to reduce layers
+RUN apt-get update && apt-get full-upgrade -y && \
+    apt-get install -y --no-install-recommends \
     sudo zsh curl wget git vim gnupg lsb-release jq \
     clamav clamav-daemon \
     python3 python3-pip python3-venv \
     nodejs npm \
     net-tools iputils-ping \
-    && apt-get clean
-
-# Initialize Antivirus Database
-RUN freshclam || true
-
-# 2. Infiltrator Arsenal (Top 10 Kali Tools)
-RUN apt-get install -y \
     nmap \
     metasploit-framework \
     sqlmap \
@@ -31,15 +25,18 @@ RUN apt-get install -y \
     john \
     hydra \
     exploitdb \
-    && apt-get clean
+    xvfb x11vnc fluxbox novnc chromium feh zenity && \
+    # Clean up apt cache to reduce image size
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Initialize Antivirus Database
+RUN freshclam || true
 
 # 3. GUI & Browser "The Sight"
-# Install Playwright/Chromium and VNC stack
+# Install Playwright globally for OpenClaw browser tool support
 RUN npm install -g playwright && \
-    playwright install chromium --with-deps && \
-    apt-get install -y \
-    xvfb x11vnc fluxbox novnc chromium feh zenity \
-    && apt-get clean
+    playwright install chromium --with-deps
 
 # Optimize noVNC default entry point (Auto-connect + Local Scaling)
 RUN echo "<html><head><meta http-equiv='refresh' content='0; url=vnc.html?autoconnect=true&scale=local'></head></html>" > /usr/share/novnc/index.html
@@ -54,7 +51,7 @@ RUN mkdir -p /usr/share/keyrings && \
     curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com/ bookworm main" | tee /etc/apt/sources.list.d/cloudflare-client.list && \
     apt-get update && apt-get install -y tailscale cloudflare-warp && \
-    apt-get clean
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 6. Agent Setup & Permissions
 RUN useradd -m -s /usr/bin/zsh agent && \
@@ -69,9 +66,9 @@ RUN mkdir -p /var/run/clamav && \
     chown -R clamav:clamav /var/run/clamav && \
     chmod 775 /var/run/clamav
 
-# Configure Fluxbox Menu and PATH
+# Configure Fluxbox Menu and PATH (Absolute Paths Enforced)
 RUN mkdir -p /home/agent/.fluxbox && \
-    echo '[begin] (Kali SHIELD)\n[exec] (Terminal) {x-terminal-emulator}\n[exec] (Chromium) {chromium --no-sandbox}\n[submenu] (Kali Tools)\n [exec] (Nmap) {x-terminal-emulator -e /bin/zsh -c "nmap; read -p \"Press enter to close...\""}\n [exec] (Metasploit) {x-terminal-emulator -e msfconsole}\n[end]\n[submenu] (OpenClaw)\n [exec] (Henry UI) {chromium --no-sandbox http://localhost:18789}\n [exec] (IDE) {chromium --no-sandbox http://localhost:18791}\n[end]\n[submenu] (System)\n [exec] (Set Wallpaper) {feh --bg-fill $(zenity --file-selection --title="Select Wallpaper")}\n[end]\n[restart] (Restart)\n[exit] (Exit)\n[end]' > /home/agent/.fluxbox/menu && \
+    echo '[begin] (Kali SHIELD)\n[exec] (Terminal) {/usr/bin/x-terminal-emulator}\n[exec] (Chromium) {/usr/bin/chromium --no-sandbox}\n[submenu] (Kali Tools)\n [exec] (Nmap) {/usr/bin/x-terminal-emulator -e /bin/zsh -c "nmap; read -p \"Press enter to close...\""}\n [exec] (Metasploit) {/usr/bin/x-terminal-emulator -e msfconsole}\n[end]\n[submenu] (OpenClaw)\n [exec] (Henry UI) {/usr/bin/chromium --no-sandbox http://localhost:18789}\n [exec] (IDE) {/usr/bin/chromium --no-sandbox http://localhost:18791}\n[end]\n[submenu] (System)\n [exec] (Set Wallpaper) {/usr/bin/feh --bg-fill $(/usr/bin/zenity --file-selection --title="Select Wallpaper")}\n[end]\n[restart] (Restart)\n[exit] (Exit)\n[end]' > /home/agent/.fluxbox/menu && \
     chown -R agent:agent /home/agent/.fluxbox
 
 # Set npm global path to avoid root-only directories

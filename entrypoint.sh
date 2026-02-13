@@ -33,41 +33,40 @@ fi
 echo "[*] Launching Collaborative Forge (IDE)..."
 code-server --bind-addr 0.0.0.0:18791 --auth none &
 
-# 3. Start noVNC (Visual HUD)
-echo "[*] Establishing Visual HUD (noVNC)..."
-Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +extension RENDER +extension RANDR &
-export DISPLAY=:99
-export SHELL=/usr/bin/zsh
-export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/agent/.npm-global/bin
-sleep 5
-fluxbox &
-sleep 2
-x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb -shared &
-sleep 2
-
-# Find noVNC proxy dynamically
-echo "[*] Scanning for noVNC launcher..."
-NOVNC_LAUNCHER=$(find /usr -name "novnc_proxy" | head -n 1)
-if [ -z "$NOVNC_LAUNCHER" ]; then
-    NOVNC_LAUNCHER=$(find /usr -name "launch.sh" | grep "novnc" | head -n 1)
-fi
-
-if [ -n "$NOVNC_LAUNCHER" ]; then
-    echo "[*] Launching noVNC via: $NOVNC_LAUNCHER"
-    $NOVNC_LAUNCHER --vnc localhost:5900 --listen 18792 &
-    echo "[*] Visual HUD optimized link: http://localhost:18792/"
-else
-    echo "[!] Warning: noVNC launcher not found. Checking alternate paths..."
-    # Try common locations if find failed
-    if [ -f "/usr/bin/novnc_proxy" ]; then
-        /usr/bin/novnc_proxy --vnc localhost:5900 --listen 18792 &
-    elif [ -f "/usr/share/novnc/utils/novnc_proxy" ]; then
-        /usr/share/novnc/utils/novnc_proxy --vnc localhost:5900 --listen 18792 &
-    else
-        echo "[!] Error: noVNC bridge could not be established."
+# 3. Start noVNC (Visual HUD) with Resurrection Capability
+start_hud() {
+    echo "[*] Establishing Visual HUD (noVNC)..."
+    Xvfb :99 -screen 0 1920x1080x24 -ac +extension GLX +extension RENDER +extension RANDR > /tmp/xvfb.log 2>&1 &
+    export DISPLAY=:99
+    export SHELL=/usr/bin/zsh
+    export PATH=$PATH:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games:/home/agent/.npm-global/bin
+    sleep 2
+    fluxbox > /tmp/fluxbox.log 2>&1 &
+    sleep 1
+    x11vnc -display :99 -forever -nopw -listen 0.0.0.0 -xkb -shared > /tmp/x11vnc.log 2>&1 &
+    
+    # Launch noVNC Proxy if not running
+    if ! pgrep -f "novnc_proxy" > /dev/null; then
+        if [ -n "$NOVNC_LAUNCHER" ]; then
+            $NOVNC_LAUNCHER --vnc localhost:5900 --listen 18792 > /tmp/novnc.log 2>&1 &
+        else
+             /usr/share/novnc/utils/novnc_proxy --vnc localhost:5900 --listen 18792 > /tmp/novnc.log 2>&1 &
+        fi
     fi
-    echo "[*] Visual HUD optimized link: http://localhost:18792/"
-fi
+}
+
+start_hud
+
+# Monitor Loop (Background Process)
+(
+    while true; do
+        sleep 60
+        if ! pgrep -x "Xvfb" > /dev/null; then
+            echo "[!] CRITICAL: Visual HUD (Xvfb) died. Initiating Resurrection..."
+            start_hud
+        fi
+    done
+) &
 
 # 5. Launch OpenClaw
 echo "[*] Waking Henry (OpenClaw Agent)..."
