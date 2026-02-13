@@ -24,9 +24,9 @@ A sovereign, high-security AI operations environment. Bundling **OpenClaw** with
 ## DISCLAIMER I AM NOT LIABLE IN ANY SHAPE OR FORM FOR MISUSE OF THIS SOFTWARE... IT IS POWERFULL AND CAN BE DANGEROUS TO PEOPLE THAT DON'T KNOW WHAT THEY DOING... USE ETHICALLY USE AT YOUR OWN RISK!
 
 ## Current Status:
- [![Tested - Windows](https://img.shields.io/badge/Tested-Windows-brightgreen?style=for-the-badge&logo=windows)](https://github.com/xtoor/shield-ai)
- [![Untested - MacOS](https://img.shields.io/badge/Untested-MacOS-red?style=for-the-badge&logo=apple)](https://github.com/xtoor/shield-ai)
- [![Untested - Linux](https://img.shields.io/badge/Untested-Linux-red?style=for-the-badge&logo=linux)](https://github.com/xtoor/shield-ai)
+ [![Supported - Windows](https://img.shields.io/badge/Supported-Windows-brightgreen?style=for-the-badge&logo=windows)](https://github.com/xtoor/shield-ai)
+ [![Untested - MacOS](https://img.shields.io/badge/Untested-MacOS-yellow?style=for-the-badge&logo=apple)](https://github.com/xtoor/shield-ai)
+ [![Untested - Linux](https://img.shields.io/badge/Untested-Linux-yellow?style=for-the-badge&logo=linux)](https://github.com/xtoor/shield-ai)
  
  **Contributors and testers needed and Welcome**
 
